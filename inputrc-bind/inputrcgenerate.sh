@@ -1,37 +1,46 @@
 # -----------------------------------------------------------------------------
 # INPUTRC  (Custom Key remapping)
+#
+# ADDS              :
+# inputrcGenerate() : safe generation of CUSTOM .inputrc file
+# inputrcTemplate() : same, but doesn't ask for no confirmation
+# bindhelp()        : ALL of the following in one shot
+# __bindhelpa()     : additional DOC
+# __bindhelpf()     : inputrc FUNCTIONS - GENERAL
+# __bindhelpk()     : lists currently BOUND and UNBOUND functions
+# __bindhelpv()     : lists ALL inputrc BINDEABLE variables for your system
 
 
-  # Create ~/.inputrc if needed
-  function inputrcGenerate() {
-    local irc_quiet_
-    local irc_frombashrc_
-    for i in $*
-    do
-      case $i in
-              --quiet | -q) irc_quiet_=1                  ;;
-              --frombashrc) irc_frombashrc_=1             ;;
-              *) echo "unknown option $i"; return 1       ;;
-      esac
-    done
+# Create ~/.inputrc if needed
+function inputrcGenerate() {
+  local irc_quiet_
+  local irc_frombashrc_
+  for i in $*
+  do
+    case $i in
+            --quiet | -q) irc_quiet_=1                  ;;
+            --frombashrc) irc_frombashrc_=1             ;;
+            *) echo "unknown option $i"; return 1       ;;
+    esac
+  done
 
 
 
-    [ "$irc_quiet_" != 1 ] && { if __confirm $__M_"This will reset your .inputrc file"; then :; else return 0; fi; }
+  [ "$irc_quiet_" != 1 ] && { if __confirm $__M_"This will reset your .inputrc file"; then :; else return 0; fi; }
 
-    # if called outside this script, re-source bashrc before
-    [ "$irc_frombashrc_" == 1 ] || { echo -e $__B_"Sourcing .bashrc"; srcbrcq; }
+  # if called outside this script, re-source bashrc before
+  [ "$irc_frombashrc_" == 1 ] || { echo -e $__B_"Sourcing .bashrc"; source ~/.bashrc >/dev/null 2>&1; }
 
-    # ERASE/CREATE .inputrc for user
-    > ~/.inputrc
-    inputrcTemplate
-  }
+  # ERASE/CREATE .inputrc for user
+  > ~/.inputrc
+  inputrcTemplate
+}
 
-  function inputrcTemplate() {
-    > ~/.inputrc  # ERASE/CREATE .inputrc for user
+function inputrcTemplate() {
+  > ~/.inputrc  # ERASE/CREATE .inputrc for user
 
 
-    cat > ~/.inputrc <<'TOTO'
+  cat > ~/.inputrc <<'TOTO'
 
     #_______________________________________
     # MACOS
@@ -232,114 +241,121 @@
 
 TOTO
 
-    echo "-> CREATED .inputrc"
-  }
+  echo "-> CREATED .inputrc"
+}
 
 
-  inputrchelp(){
-    echo -e "
-  $__K_# in order to find an escape sequence suitable for your (readline) .inputrc, do :
-    $__B_\$ read$__K_
-  # press a key (here : SHIFT+TAB)
-    $__EMR_^[$__EMG_[Z$__K_
+inputrchelp(){
+  echo -e "
+$__K_# in order to find an escape sequence suitable for your (readline) .inputrc, do :
+  $__B_\$ read$__K_
+# press a key (here : SHIFT+TAB)
+  $__EMR_^[$__EMG_[Z$__K_
 
-  # $__EMR_^[$__K_ is equivalent to $__EMR_\\e$__K_
-  # $__EMG_[Z$__K_ is our escape proper
-  # So in .inputrc, map :
-    $__B_\"$__EMR_\\e$__EMG_[Z$__B_\": function_you_wish_to_map$__K_
+# $__EMR_^[$__K_ is equivalent to $__EMR_\\e$__K_
+# $__EMG_[Z$__K_ is our escape proper
+# So in .inputrc, map :
+  $__B_\"$__EMR_\\e$__EMG_[Z$__B_\": function_you_wish_to_map$__K_
 
-  # I personally like :$__B_
-    \"\\e[Z\":\"\\e-1\\C-i\" # map SHIFT-TAB to backward completion$__K_
-  # but it somewhat fucks up with badly formated colored prompts. Beware
+# I personally like :$__B_
+  \"\\e[Z\":\"\\e-1\\C-i\" # map SHIFT-TAB to backward completion$__K_
+# but it somewhat fucks up with badly formated colored prompts. Beware
 
-  # MORE:
-     ${__B_}$ bash -c \"help bind\" $__K_# more on bind function
-     ${__B_}$ bindhelp            $__K_# (custom func) list ALL$__B_ key bindings, functions, variables$__K_
-                             see also 'bindhelp key|var|func' for partial result
+# MORE:
+    ${__B_}$ bash -c \"help bind\" $__K_# more on bind function
+    ${__B_}$ bindhelp            $__K_# (custom func) list ALL$__B_ key bindings, functions, variables$__K_
+                            see also 'bindhelp key|var|func' for partial result
 
-  # Readline init syntax file :  $__Y_ http://www.faqs.org/docs/bashman/bashref_90.html#SEC97$__K_
-  # Conditional init constructs :$__Y_ http://www.faqs.org/docs/bashman/bashref_91.html#SEC98$__K_
-  # Sample init file :           $__Y_ http://www.faqs.org/docs/bashman/bashref_92.html#SEC99$__NN_
+# Readline init syntax file :  $__Y_ http://www.faqs.org/docs/bashman/bashref_90.html#SEC97$__K_
+# Conditional init constructs :$__Y_ http://www.faqs.org/docs/bashman/bashref_91.html#SEC98$__K_
+# Sample init file :           $__Y_ http://www.faqs.org/docs/bashman/bashref_92.html#SEC99$__NN_
 
 "
 
-  }
+}
 
 
   # List all keybindings, bind functions, and bind variables, in colors & readable way
-  bindhelp(){
-    case $1 in
-      k|key|keys|bind|binding|bindings)
-        __bindhelpk
-        ;;
-      v|variable|variables|var)
-        __bindhelpv
-        ;;
-      f|func|function|functions)
-        __bindhelpf
-        ;;
-      *)
-        __bindhelpf; __bindhelpk; __bindhelpv; __bindhelpa
-        ;;
-    esac
+bindhelp(){
+  case $1 in
+    k|key|keys|bind|binding|bindings)
+      __bindhelpk
+      ;;
+    v|variable|variables|var)
+      __bindhelpv
+      ;;
+    f|func|function|functions)
+      __bindhelpf
+      ;;
+    *)
+      __bindhelpf; __bindhelpk; __bindhelpv; __bindhelpa
+      ;;
+  esac
 
-  }
+}
 
-  __bindhelpa(){
+__bindhelpa(){
 
-    echo -e "
-    $__K_# Also, read :  ${__Y_}http://www.faqs.org/docs/bashman/bashref_93.html$__K_
+  echo -e "
+  $__K_# Also, read :  ${__Y_}http://www.faqs.org/docs/bashman/bashref_93.html$__K_
 
-      8.4 Bindable Readline Commands
+    8.4 Bindable Readline Commands
 
-      8.4.1 Commands For Moving                   Moving about the line.
-      8.4.2 Commands For Manipulating The History Getting at previous lines.
-      8.4.3 Commands For Changing Text            Commands for changing text.
-      8.4.4 Killing And Yanking                   Commands for killing and yanking.
-      8.4.5 Specifying Numeric Arguments          Specifying numeric arguments, repeat counts.
-      8.4.6 Letting Readline Type For You         Getting Readline to do the typing for you.
-      8.4.7 Keyboard Macros                       Saving and re-executing typed characters
-      8.4.8 Some Miscellaneous Commands           Other miscellaneous commands.
+    8.4.1 Commands For Moving                   Moving about the line.
+    8.4.2 Commands For Manipulating The History Getting at previous lines.
+    8.4.3 Commands For Changing Text            Commands for changing text.
+    8.4.4 Killing And Yanking                   Commands for killing and yanking.
+    8.4.5 Specifying Numeric Arguments          Specifying numeric arguments, repeat counts.
+    8.4.6 Letting Readline Type For You         Getting Readline to do the typing for you.
+    8.4.7 Keyboard Macros                       Saving and re-executing typed characters
+    8.4.8 Some Miscellaneous Commands           Other miscellaneous commands.
 
 "
 
-  }
+}
 
-  __bindhelpf(){
-    echo
-    echo -e $__EMM_"inputrc FUNCTIONS : GENERAL"$__NN_
-    printf "\e[0;33m%-45s \e[0;31m%-45s \e[0;32m%-45s\n" $(bind -l | grep -v "vi-")
-    echo -e $__EMM_"                    VI MODE"$__NN_
-    printf "\e[0;33m%-45s \e[0;31m%-45s \e[0;32m%-45s\n" $(bind -l | grep "vi-")
-  }
+__bindhelpf(){
+  echo
+  echo -e $__EMM_"inputrc FUNCTIONS : GENERAL"$__NN_
+  printf "\e[0;33m%-45s \e[0;31m%-45s \e[0;32m%-45s\n" $(bind -l | grep -v "vi-")
+  echo -e $__EMM_"                    VI MODE"$__NN_
+  printf "\e[0;33m%-45s \e[0;31m%-45s \e[0;32m%-45s\n" $(bind -l | grep "vi-")
+}
 
-  __bindhelpk(){
-    echo
-    echo -e $__EMM_"inputrc KEYBINDINGS"$__NN_
-    echo
-    echo -e $__EMM_"        BOUND"$__NN_
-    local __list=`bind -p | grep -v '^#' | grep -v "self-insert" | grep -v '\\e[[:space:]]*"'`
-    printf "\e[0;31m%-12s \e[1;32m%-40s \e[0;31m%-12s \e[1;32m%s\n" $__list
-    echo
-    echo -e $__EMM_"        UNBOUND"$__NN_
-    __list=`bind -p | grep '^#' | grep -v 'vi-' | grep -v "self-insert" | grep -v '\\e[[:space:]]*"' | sed 's/#//' | sed 's/(not bound)$//'`
-    printf "\e[0;33m%-53s \e[0;33m%s\n" $__list
-    __list=`bind -p | grep '^#' | grep  'vi-' | grep -v "self-insert" | grep -v '\\e[[:space:]]*"' | sed 's/#//' | sed 's/(not bound)$//'`
-    printf "\e[1;30m%-53s \e[1;30m%s\n" $__list
-  }
+__bindhelpk(){
+  echo
+  echo -e $__EMM_"inputrc KEYBINDINGS"$__NN_
+  echo
+  echo -e $__EMM_"        BOUND"$__NN_
+  local __list=`bind -p | grep -v '^#' | grep -v "self-insert" | grep -v '\\e[[:space:]]*"'`
+  printf "\e[0;31m%-12s \e[1;32m%-40s \e[0;31m%-12s \e[1;32m%s\n" $__list
+  echo
+  echo -e $__EMM_"        UNBOUND"$__NN_
+  __list=`bind -p | grep '^#' | grep -v 'vi-' | grep -v "self-insert" | grep -v '\\e[[:space:]]*"' | sed 's/#//' | sed 's/(not bound)$//'`
+  printf "\e[0;33m%-53s \e[0;33m%s\n" $__list
+  __list=`bind -p | grep '^#' | grep  'vi-' | grep -v "self-insert" | grep -v '\\e[[:space:]]*"' | sed 's/#//' | sed 's/(not bound)$//'`
+  printf "\e[1;30m%-53s \e[1;30m%s\n" $__list
+}
 
-  __bindhelpv(){
-    echo
-    echo -e $__EMM_"inputrc VARIABLES"$__NN_
-    printf "\e[0;30m%s \e[0;31m%-35s \e[0;32m%3s\n" $(
-      echo "___ ______________________________ ___"
-      bind -v | grep 'on$'
-      echo "___ ______________________________ ___"
-      bind -v | grep 'off$'
-      echo "___ ______________________________ ___"
-      bind -v | grep -v 'on$\|off$'
-      )
-  }
+__bindhelpv(){
+  echo
+  echo -e $__EMM_"inputrc VARIABLES"$__NN_
+  printf "\e[0;30m%s \e[0;31m%-35s \e[0;32m%3s\n" $(
+    echo "___ ______________________________ ___"
+    bind -v | grep 'on$'
+    echo "___ ______________________________ ___"
+    bind -v | grep 'off$'
+    echo "___ ______________________________ ___"
+    bind -v | grep -v 'on$\|off$'
+    )
+}
+
+alias ?bind='bindhelp'
+alias ?inputrc='inputrchelp'
+alias setemacs='set -o emacs'
+alias setvi='set -o vi'
+
+
 
   # UNCOMMENT following line to automatically generate an .inputrc file
   # if none exists. Iy you don't know what it is, YOU ARE MISSING SOMETHING !!
