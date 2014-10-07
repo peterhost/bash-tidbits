@@ -499,6 +499,10 @@ EOF
         bindkey -t "^a^[OC" next                                    #       c+a left-arrow          previous window (in the same region)
         bindkey -t "^a^[OA" focus up                                #       c+a up-arrow            switch to previous REGION
         bindkey -t "^a^[OB" focus down                              #       c+a down-arrow          switch to next REGION
+        bindkey -t "^aj" focus down
+        bindkey -t "^ak" focus up
+        bindkey -t "^at" focus top
+        bindkey -t "^ab" focus bottom
 
         #bindkey -t "^q^[OA" focus top                      # urxvt: c+a up-arrow   =>      top REGION
         #bindkey -t "^q^[OB" focus bottom                   # urxvt: c+a down-arrow=>       bottom REGION
