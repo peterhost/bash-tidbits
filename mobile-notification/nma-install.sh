@@ -132,5 +132,5 @@ send_notification
 check_notification
 EOF
 
+  chmod +x  $HOME/bin/nma
 }
-chmod +x  $HOME/bin/nma
