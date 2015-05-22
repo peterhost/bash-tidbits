@@ -16,7 +16,7 @@ __event=$2
 __desc=$3
 __priority=$4
 
-prowlpost "[$1] $2" $4 "$3"
+prowlpost "[$1] $2" "$4" "$3"
 nma "$1" "$2" "$3" "$4"
 EOF
   chmod +x  $HOME/bin/mobilenotify
