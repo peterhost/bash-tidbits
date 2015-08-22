@@ -1,6 +1,6 @@
 __nmainstall() {
 cat << 'EOF' > $HOME/bin/nma
-#!/bin/bash
+##!/bin/bash
 #########################################################################################
 ### androidNotifty.sh        	#
 ### Script for sending notifications using "Notify My Androids" API    #
