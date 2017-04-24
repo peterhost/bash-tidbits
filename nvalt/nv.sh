@@ -4,16 +4,23 @@ ag --help >/dev/null 2>&1
     export __notesearch=
 
     # search markdown notes, print ordered list, keep that in ENV variable
+    # (combine 'ag' and 'find')
     function nvs() {
         local searchword="$@"
-        export __notesearch="$(ag -i -l $searchword "$HOME/Dropbox/notesy/")";
-        ag -i -l "$searchword" "$HOME/Dropbox/notesy/" | nl
+        #export __notesearch="$(ag -i -l $searchword "$HOME/Dropbox/notesy/")";
+        #ag -i -l "$searchword" "$HOME/Dropbox/notesy/" | nl
+        export __notesearch="$(find "$HOME/Dropbox/notesy" -name "*$searchword*" && ag -i -l $searchword "$HOME/Dropbox/notesy/" )";
+        find "$HOME/Dropbox/notesy" -name "*$searchword*" && ag -i -l "$searchword" "$HOME/Dropbox/notesy/" | nl
     }
 
+    # search markdown notes, print ordered list, keep that in ENV variable
+    # (combine 'ag' and 'find')
     function nvs_without_linenumbers() {
         local searchword="$@"
-        export __notesearch="$(ag -i -l $searchword "$HOME/Dropbox/notesy/")";
-        ag -i -l "$searchword" "$HOME/Dropbox/notesy/"
+        #export __notesearch="$(ag -i -l $searchword "$HOME/Dropbox/notesy/")";
+        #ag -i -l "$searchword" "$HOME/Dropbox/notesy/"
+        export __notesearch="$(find "$HOME/Dropbox/notesy" -name "*$searchword*" && ag -i -l $searchword "$HOME/Dropbox/notesy/" )";
+        find "$HOME/Dropbox/notesy" -name "*$searchword*" && ag -i -l "$searchword" "$HOME/Dropbox/notesy/"
     }
 
     # open note of said number in latest nvs search, in vim
