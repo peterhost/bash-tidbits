@@ -162,7 +162,8 @@ ag --help >/dev/null 2>&1
                     # ENTER key
                     local file="$(getline $highlight "$alllines")"
 
-                    vim -c "Goyo" "$file"
+                    #vim -c "Goyo" "$file"
+                    vim -c "Goyo" -c "let @/='"$searchstring"'" -c "set hlsearch" "$file"
                     #continue
                     ;;
                 'down')
